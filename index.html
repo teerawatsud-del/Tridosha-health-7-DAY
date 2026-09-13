@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบประเมินสุขภาพตามหลักตรีธาตุ</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal-900: #0d3d3a;
+    --teal-700: #1a6b65;
+    --teal-500: #2a9d8f;
+    --teal-300: #74c8bf;
+    --teal-100: #d4f0ed;
+    --teal-50:  #eef8f7;
+
+    --vata-color: #7c5cbf;
+    --vata-light: #f0ebfa;
+    --pitta-color: #c75b2a;
+    --pitta-light: #fbeee7;
+    --kapha-color: #3a8a4e;
+    --kapha-light: #e8f5eb;
+
+    --text-primary: #1a2e2d;
+    --text-secondary: #4a6665;
+    --border: #c5e0dd;
+    --bg: #f2faf9;
+
+    --radius: 12px;
+    --shadow: 0 2px 12px rgba(13,61,58,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, var(--teal-900) 0%, var(--teal-700) 100%);
+    color: white;
+    padding: 28px 24px 24px;
+    text-align: center;
+  }
+  header .subtitle {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--teal-300);
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 700;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+  header p {
+    font-size: 14px;
+    color: var(--teal-100);
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── Progress ── */
+  .progress-bar-wrap {
+    background: var(--teal-900);
+    padding: 0 24px 16px;
+  }
+  .progress-track {
+    background: rgba(255,255,255,0.15);
+    border-radius: 99px;
+    height: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--teal-300);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label {
+    text-align: center;
+    font-size: 12px;
+    color: var(--teal-100);
+    margin-top: 6px;
+    max-width: 600px;
+    margin: 6px auto 0;
+  }
+
+  /* ── Main container ── */
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+
+  /* ── Section card ── */
+  .section-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal-700);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--teal-100);
+  }
+
+  /* ── Demographics ── */
+  .form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .form-group {
+    flex: 1;
+    min-width: 140px;
+  }
+  label.field-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 7px;
+  }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: white;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--teal-500);
+  }
+  .radio-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .radio-option {
+    flex: 1;
+    min-width: 80px;
+  }
+  .radio-option input { display: none; }
+  .radio-option label {
+    display: block;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-secondary);
+  }
+  .radio-option input:checked + label {
+    background: var(--teal-500);
+    border-color: var(--teal-500);
+    color: white;
+    font-weight: 600;
+  }
+
+  /* ── Question list ── */
+  .question-item {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--teal-50);
+  }
+  .question-item:last-child { border-bottom: none; }
+
+  .question-text {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+  .question-num {
+    display: inline-block;
+    background: var(--teal-100);
+    color: var(--teal-700);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    margin-right: 6px;
+  }
+
+  .likert-row {
+    display: flex;
+    gap: 8px;
+  }
+  .likert-opt {
+    flex: 1;
+  }
+  .likert-opt input { display: none; }
+  .likert-opt label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .likert-opt label .score-badge {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--teal-50);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--teal-700);
+    transition: all 0.15s;
+  }
+  .likert-opt input:checked + label {
+    border-color: var(--teal-500);
+    background: var(--teal-50);
+    color: var(--teal-700);
+  }
+  .likert-opt input:checked + label .score-badge {
+    background: var(--teal-500);
+    color: white;
+  }
+  .question-item.unanswered .likert-opt label {
+    border-color: #f0a090;
+  }
+
+  /* ── Submit button ── */
+  .btn-submit {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--teal-700), var(--teal-500));
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-submit:active { transform: none; }
+
+  .error-msg {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 10px;
+    text-align: center;
+    display: none;
+  }
+
+  /* ── RESULTS PAGE ── */
+  #result-page { display: none; }
+
+  .result-header {
+    background: linear-gradient(135deg, var(--teal-900), var(--teal-700));
+    color: white;
+    padding: 28px 24px 24px;
+    text-align: center;
+  }
+  .result-header .check-icon {
+    width: 56px; height: 56px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    font-size: 28px;
+  }
+  .result-header h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .result-header p { font-size: 14px; color: var(--teal-100); }
+
+  /* ── Score bars ── */
+  .score-overview {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .dosha-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .dosha-row:last-child { margin-bottom: 0; }
+  .dosha-name {
+    width: 70px;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .dosha-name.vata { color: var(--vata-color); }
+  .dosha-name.pitta { color: var(--pitta-color); }
+  .dosha-name.kapha { color: var(--kapha-color); }
+  .bar-track {
+    flex: 1;
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s ease;
+  }
+  .bar-fill.vata { background: var(--vata-color); }
+  .bar-fill.pitta { background: var(--pitta-color); }
+  .bar-fill.kapha { background: var(--kapha-color); }
+  .dosha-score-label {
+    width: 55px;
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  /* ── Imbalance badge ── */
+  .imbalance-alert {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1.5px solid;
+  }
+  .imbalance-alert.vata {
+    background: var(--vata-light);
+    border-color: #b39ddb;
+  }
+  .imbalance-alert.pitta {
+    background: var(--pitta-light);
+    border-color: #f0a87a;
+  }
+  .imbalance-alert.kapha {
+    background: var(--kapha-light);
+    border-color: #88c99b;
+  }
+  .imbalance-alert .alert-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .imbalance-alert h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .imbalance-alert p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  /* ── Advice card ── */
+  .advice-card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .advice-card-header {
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
+  }
+  .advice-card-header.vata { background: var(--vata-color); }
+  .advice-card-header.pitta { background: var(--pitta-color); }
+  .advice-card-header.kapha { background: var(--kapha-color); }
+
+  .advice-section {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--teal-50);
+  }
+  .advice-section:last-child { border-bottom: none; }
+  .advice-section h4 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+  }
+  .advice-section p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-primary);
+  }
+  .advice-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .advice-list li {
+    font-size: 14px;
+    line-height: 1.6;
+    padding-left: 18px;
+    position: relative;
+    color: var(--text-primary);
+  }
+  .advice-list li::before {
+    content: '•';
+    position: absolute;
+    left: 4px;
+    font-weight: 700;
+  }
+  .advice-list.vata li::before { color: var(--vata-color); }
+  .advice-list.pitta li::before { color: var(--pitta-color); }
+  .advice-list.kapha li::before { color: var(--kapha-color); }
+
+  .result-box {
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .result-box.vata { background: var(--vata-light); }
+  .result-box.pitta { background: var(--pitta-light); }
+  .result-box.kapha { background: var(--kapha-light); }
+
+  /* ── Balanced state ── */
+  .balanced-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1.5px solid #a8d5a2;
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .balanced-card .big-icon { font-size: 48px; margin-bottom: 12px; }
+  .balanced-card h3 { font-size: 20px; font-weight: 700; color: #2d7a3a; margin-bottom: 8px; }
+  .balanced-card p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+
+  /* ── Sheet status ── */
+  .sheet-status {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  .sheet-status .status-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .sheet-status.sending .status-dot { background: #f0a820; animation: pulse 1s infinite; }
+  .sheet-status.success .status-dot { background: #4caf50; }
+  .sheet-status.fail .status-dot { background: #e53935; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  .btn-restart {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background: var(--teal-50);
+    color: var(--teal-700);
+    border: 1.5px solid var(--teal-300);
+    border-radius: var(--radius);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 8px;
+  }
+  .btn-restart:hover { background: var(--teal-100); }
+
+  /* ── Responsive ── */
+  @media (max-width: 480px) {
+    .section-card { padding: 20px 16px; }
+    .likert-opt label { font-size: 10px; padding: 6px 2px; }
+    .likert-opt label .score-badge { width: 24px; height: 24px; font-size: 12px; }
+  }
+
+  /* ── Config panel ── */
+  .config-panel {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .config-panel summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--teal-700);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .config-panel summary::marker { display: none; }
+  .config-panel summary::-webkit-details-marker { display: none; }
+  .config-panel[open] summary { margin-bottom: 14px; }
+  .config-url-input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Sarabun', monospace;
+    font-size: 12px;
+    color: var(--text-primary);
+  }
+  .config-url-input:focus { outline: none; border-color: var(--teal-500); }
+  .config-note { font-size: 12px; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ ASSESSMENT PAGE ═══════════════ -->
+<div id="assessment-page">
+
+  <header>
+    <div class="subtitle">การแพทย์แผนไทย · ตรีธาตุ</div>
+    <h1>แบบประเมินสุขภาพตามหลักตรีธาตุ</h1>
+    <p>โปรดพิจารณาสุขภาพและอาการของท่านใน <strong>7 วันที่ผ่านมา</strong><br>และเลือกคำตอบที่ตรงกับท่านมากที่สุด</p>
+  </header>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">กรุณาตอบคำถามทุกข้อ</div>
+  </div>
+
+  <div class="container">
+
+    <!-- Config panel -->
+    <details class="config-panel" id="configPanel">
+      <summary>⚙️ ตั้งค่าการส่งข้อมูลไปยัง Google Sheets</summary>
+      <label class="field-label" for="sheetsUrl">Google Apps Script Web App URL</label>
+      <input type="text" id="sheetsUrl" class="config-url-input" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec">
+      <p class="config-note">วางลิงก์ Web App จาก Google Apps Script ที่นี่เพื่อส่งผลการประเมินไปยัง Google Sheets<br>
+      ดูวิธีสร้างด้านล่าง หรือข้ามขั้นตอนนี้หากต้องการทดสอบระบบก่อน</p>
+    </details>
+
+    <!-- Demographics -->
+    <div class="section-card">
+      <div class="section-title">ข้อมูลทั่วไป</div>
+
+      <div class="form-row" style="margin-bottom:16px">
+        <div class="form-group">
+          <label class="field-label">รหัส</label>
+          <input type="text" id="studentId" placeholder="เช่น 6510110001">
+        </div>
+        <div class="form-group">
+          <label class="field-label">อายุ (ปี)</label>
+          <input type="number" id="age" min="1" max="120" placeholder="เช่น 35">
+        </div>
+        <div class="form-group" style="flex:2">
+          <label class="field-label">เพศ</label>
+          <div class="radio-group">
+            <div class="radio-option">
+              <input type="radio" name="gender" id="g-male" value="ชาย">
+              <label for="g-male">ชาย</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="gender" id="g-female" value="หญิง">
+              <label for="g-female">หญิง</label>
+            </div>
+            <div class="radio-option">
+              <input type="radio" name="gender" id="g-other" value="ไม่ระบุ">
+              <label for="g-other">ไม่ระบุ</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="section-card" id="questionsCard">
+      <div class="section-title">อาการในช่วง 7 วันที่ผ่านมา</div>
+
+      <div class="likert-headers" style="display:flex; gap:8px; margin-bottom:4px; padding-left:0">
+        <div style="flex:3"></div>
+        <div style="flex:1; text-align:center; font-size:11px; color:var(--text-secondary);">ไม่เคย</div>
+        <div style="flex:1; text-align:center; font-size:11px; color:var(--text-secondary);">นานๆ ครั้ง</div>
+        <div style="flex:1; text-align:center; font-size:11px; color:var(--text-secondary);">บ่อยครั้ง</div>
+        <div style="flex:1; text-align:center; font-size:11px; color:var(--text-secondary);">เกือบทุกวัน</div>
+      </div>
+
+      <div id="questionsList"></div>
+    </div>
+
+    <div class="error-msg" id="errorMsg">⚠ กรุณาตอบคำถามให้ครบทุกข้อก่อนกดส่ง</div>
+    <button class="btn-submit" onclick="submitAssessment()">ดูผลการประเมิน →</button>
+
+  </div>
+</div>
+
+<!-- ═══════════════ RESULTS PAGE ═══════════════ -->
+<div id="result-page">
+
+  <div class="result-header">
+    <div class="check-icon">✓</div>
+    <h2>ผลการประเมินสุขภาพ</h2>
+    <p id="result-meta">แบบประเมินตามหลักตรีธาตุ · การแพทย์แผนไทย</p>
+  </div>
+
+  <div class="progress-bar-wrap" style="background:var(--teal-900); padding:16px 24px">
+    <div id="sheet-status-bar" class="sheet-status sending" style="max-width:640px;margin:0 auto;background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:var(--teal-100)">
+      <div class="status-dot"></div>
+      <span id="sheet-status-text">กำลังส่งข้อมูลไปยัง Google Sheets…</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="result-content"></div>
+    <button class="btn-restart" onclick="restartAssessment()">← ทำแบบประเมินใหม่</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// DATA: Questions with dosha mapping
+// ══════════════════════════════════════
+const questions = [
+  { id: 1,  icon: '💨', topic: 'ท้องอืด',      text: 'มีอาการท้องอืดหรือมีลมในท้องมากกว่าปกติ',                       dosha: 'vata' },
+  { id: 2,  icon: '🚽', topic: 'ท้องผูก',      text: 'มีอาการท้องผูก ถ่ายยาก หรืออุจจาระแห้งแข็งกว่าปกติ',           dosha: 'vata' },
+  { id: 3,  icon: '🌵', topic: 'ปากแห้ง',      text: 'รู้สึกผิว ปาก หรือคอแห้งกว่าปกติ',                             dosha: 'vata' },
+  { id: 4,  icon: '😴', topic: 'นอนหลับ',      text: 'มีอาการหลับยาก ตื่นง่าย หรือหลับไม่ต่อเนื่องมากกว่าปกติ',     dosha: 'vata' },
+  { id: 5,  icon: '😰', topic: 'วิตกกังวล',    text: 'รู้สึกกระสับกระส่าย กังวล หรือจิตใจไม่สงบกว่าปกติ',           dosha: 'vata' },
+  { id: 6,  icon: '🌡️', topic: 'ตัวร้อน',     text: 'รู้สึกร้อนง่ายหรือตัวร้อนกว่าปกติ',                           dosha: 'pitta' },
+  { id: 7,  icon: '🥤', topic: 'กระหายน้ำ',   text: 'รู้สึกกระหายน้ำหรือปากคอร้อนมากกว่าปกติ',                     dosha: 'pitta' },
+  { id: 8,  icon: '🔥', topic: 'แสบร้อนท้อง', text: 'มีอาการแสบร้อนกลางอก เรอเปรี้ยว หรือแสบท้องมากกว่าปกติ',     dosha: 'pitta' },
+  { id: 9,  icon: '🌊', topic: 'ท้องเสีย',     text: 'มีอาการถ่ายเหลวหรือถ่ายบ่อยกว่าปกติ',                         dosha: 'pitta' },
+  { id: 10, icon: '💧', topic: 'เหงื่อออก',    text: 'มีอาการเหงื่อออกง่ายหรือออกมากกว่าปกติ',                      dosha: 'pitta' },
+  { id: 11, icon: '🪨', topic: 'อ่อนเพลีย',   text: 'รู้สึกหนักตัว เฉื่อย หรือไม่กระฉับกระเฉงกว่าปกติ',            dosha: 'kapha' },
+  { id: 12, icon: '🛌', topic: 'ง่วงซึม',      text: 'รู้สึกง่วงนอนหรือนอนมากกว่าปกติ',                             dosha: 'kapha' },
+  { id: 13, icon: '🍽️', topic: 'ความอยากอาหาร', text: 'รู้สึกหิวช้า หรือความอยากอาหารลดลงกว่าปกติ',               dosha: 'kapha' },
+  { id: 14, icon: '🫃', topic: 'หนักท้อง',     text: 'รู้สึกอิ่มนานหรือหนักท้องหลังรับประทานอาหารมากกว่าปกติ',     dosha: 'kapha' },
+  { id: 15, icon: '🤧', topic: 'เสมหะ/น้ำมูก', text: 'มีน้ำมูก เสมหะ หรือเมือกในคอมากกว่าปกติ',                   dosha: 'kapha' },
+];
+
+const LABELS = ['ไม่เคย', 'นานๆ ครั้ง', 'บ่อยครั้ง', 'เกือบทุกวัน'];
+const SCORES = [1, 2, 3, 4];
+
+// ── Build question UI ──
+const list = document.getElementById('questionsList');
+questions.forEach(q => {
+  const item = document.createElement('div');
+  item.className = 'question-item';
+  item.id = 'qi-' + q.id;
+
+  let opts = '';
+  SCORES.forEach((s, i) => {
+    opts += `<div class="likert-opt">
+      <input type="radio" name="q${q.id}" id="q${q.id}a${s}" value="${s}">
+      <label for="q${q.id}a${s}">
+        <span class="score-badge">${s}</span>
+        <span>${LABELS[i]}</span>
+      </label>
+    </div>`;
+  });
+
+  item.innerHTML = `
+    <div class="question-text"><span class="question-num">${q.id}</span>${q.text}</div>
+    <div class="likert-row">${opts}</div>
+  `;
+  list.appendChild(item);
+});
+
+// ── Progress tracking ──
+document.querySelectorAll('input[type=radio]').forEach(r => {
+  r.addEventListener('change', updateProgress);
+});
+
+function updateProgress() {
+  const answered = questions.filter(q =>
+    document.querySelector(`input[name="q${q.id}"]:checked`)
+  ).length;
+  const pct = Math.round((answered / questions.length) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent =
+    answered === questions.length
+      ? 'ตอบครบทุกข้อแล้ว ✓'
+      : `ตอบแล้ว ${answered} / ${questions.length} ข้อ`;
+}
+
+// ══════════════════════════════════════
+// ADVICE DATA
+// ══════════════════════════════════════
+const advice = {
+  vata: {
+    label: 'วาตะ', emoji: '💨',
+    description: 'วาตะ (ลม) คือพลังงานแห่งการเคลื่อนไหว ควบคุมระบบการหายใจ ชีพจร การไหลเวียนโลหิต การทำงานของลำไส้ และจิตใจ เมื่อวาตะเสียสมดุลจะทำให้ระบบต่าง ๆ แปรปรวน',
+    symptoms: 'เหนื่อย อ่อนล้า ขาดสมาธิ นอนหลับยาก ท้องผูกเป็นครั้งคราว ท้องอืดเฟ้อ รู้สึกหนาวง่าย มือเท้าเย็น วิตกกังวลง่าย',
+    causes: 'อดนอน พักผ่อนน้อย กลั้นอุจจาระหรือปัสสาวะ อดอาหาร รับประทานอาหารไม่ตรงเวลา รับประทานอาหารรสขม เผ็ด ฝาด มากเกินไป พูดมาก ใช้ความคิดมาก อยู่ในอากาศหนาวหรือเย็นเกินไป',
+    tips: [
+      'เข้านอนและตื่นนอนตรงเวลา รับประทานอาหารตรงเวลาเป็นประจำ',
+      'ไม่ควรอดอาหาร เลือกอาหารที่มีคุณค่าทางโภชนาการ',
+      'ดื่มชาสมุนไพรอุ่น ๆ ที่มีความหอม รสหวานอ่อน ๆ และมีคุณสมบัติช่วยให้สบายท้อง',
+      'หลีกเลี่ยงอาหารดิบ อาหารแปรรูป รสจัด คาเฟอีน และแอลกอฮอล์',
+      'เลือกอาหารอุ่น ปรุงสุก และย่อยง่าย โดยเฉพาะมื้อเช้าและมื้อเย็น',
+      'นวดตัวด้วยน้ำมันอุ่น ๆ ก่อนอาบน้ำ หรือนวดศีรษะสัปดาห์ละ 2–3 ครั้ง เพื่อสร้างความชุ่มชื้นให้ผิวและเส้นผม',
+      'ป้องกันร่างกายจากลมและความเย็น การนั่งในห้องแอร์เย็น ๆ เป็นเวลานาน',
+      'เดินเบา ๆ หรือบริหารร่างกายเบา ๆ ตอนเช้า 20 นาทีทุกวัน',
+      'ทำสมาธิหรือฝึกหายใจวันละ 30 นาที',
+      'ออกกำลังกายสงบ ๆ เช่น โยคะ ฤๅษีดัดตน หรือชี่กง',
+    ],
+    result: 'ร่างกายมีกำลัง ชีวิตชีวา จิตใจแจ่มใส ตื่นตัว หลับสบาย การไหลเวียนโลหิตดี และอุณหภูมิร่างกายสม่ำเสมอ',
+  },
+  pitta: {
+    label: 'ปิตตะ', emoji: '🔥',
+    description: 'ปิตตะ (ดี/ไฟ) คือพลังงานแห่งความร้อนและการเปลี่ยนแปลง ทำหน้าที่ควบคุมการย่อยอาหาร การเผาผลาญ และอุณหภูมิร่างกาย เมื่อปิตตะเสียสมดุล ความร้อนภายในจะมากเกินไป',
+    symptoms: 'อารมณ์ร้อน หงุดหงิดง่าย กรดเกินในกระเพาะ แสบร้อนกลางอก เป็นผื่นหรือสิวง่าย นอนหลับไม่สนิท ขับถ่ายเหลวหรือท้องเสียง่าย',
+    causes: 'รับประทานอาหารรสเผ็ดร้อน มันจัด เปรี้ยวจัด เค็มจัด เครื่องดื่มแอลกอฮอล์ อาหารปิ้งย่าง อยู่กลางแดดหรือในที่ร้อนนาน อารมณ์โกรธ โมโห ความกดดัน อากาศร้อน',
+    tips: [
+      'หลีกเลี่ยงแดดและความร้อน โดยเฉพาะช่วงกลางวัน',
+      'ไม่ออกกำลังกายในที่ร้อน',
+      'หลีกเลี่ยงอาหารรสเผ็ดจัด และการปล่อยให้หิวจัดหรือกินเร็วเกินไป',
+      'เลือกอาหารที่อิ่มนาน ขับถ่ายทุกวันเพื่อลดความร้อนส่วนเกิน',
+      'อยู่ในที่เย็นสบาย ใส่เสื้อผ้าฝ้ายโปร่งเบา สวมหมวกและแว่นกันแดด',
+      'ดื่มน้ำมากขึ้น และออกกำลังกายหลังพระอาทิตย์ตก',
+      'เข้านอนเร็ว หลีกเลี่ยงชา กาแฟ คาเฟอีน และแอลกอฮอล์',
+      'ท่องเที่ยวในที่มีน้ำ เช่น ทะเล น้ำตก น้ำพุ',
+      'อยู่กับเพื่อนที่ให้พลังบวก ฟังเพลงหรือดมกลิ่นหอมผ่อนคลาย',
+      'ดื่มน้ำสมุนไพรดับร้อน นวดด้วยน้ำมันที่มีกลิ่นหอมอ่อน ๆ และมีความอ่อนโยน',
+    ],
+    result: 'ระบบย่อยดี ผิวพรรณสดใส สติปัญญาเฉียบแหลม อารมณ์เย็นขึ้น หลับสบาย และมีความสงบในใจ',
+  },
+  kapha: {
+    label: 'เสมหะ', emoji: '💧',
+    description: 'เสมหะ (เสลด/น้ำ) คือพลังงานแห่งความหนัก ความชุ่มชื้น และความมั่นคง ทำหน้าที่ควบคุมของเหลวในร่างกาย เมื่อเสมหะเสียสมดุล จะทำให้เกิดภาวะชื้น หนัก ระบบย่อยช้าลง',
+    symptoms: 'น้ำหนักขึ้นง่าย ย่อยอาหารช้า เป็นโรคไซนัสหรือทางเดินหายใจง่าย ร่างกายเฉื่อยชา ขี้เกียจ รู้สึกเศร้าซึมเซา ตื่นนอนยาก หิวบ่อย',
+    causes: 'กินอาหารหวาน มัน เปรี้ยว เค็มจัด อาหารเลี่ยนหรืออาหารเย็น นอนกลางวันนาน พักมากเกินไปหรือไม่ออกกำลังกาย กินเนื้อสัตว์และไขมันมาก อยู่ในอากาศเย็นชื้น',
+    tips: [
+      'ออกกำลังกายทุกวัน โดยเฉพาะแบบที่กระตุ้นหรือแข่งขัน',
+      'หาแรงบันดาลใจใหม่ ๆ เช่น เรียนรู้ทักษะใหม่ ท่องเที่ยว หรือทำกิจกรรมท้าทาย',
+      'เปิดใจสร้างความสัมพันธ์ใหม่ หลีกเลี่ยงอาหารหวานและมัน',
+      'ขับถ่ายทุกวัน ขัดผิว อบสมุนไพร หรือนวดด้วยน้ำมันที่มีคุณสมบัติกระตุ้นและสร้างความมีชีวิตชีวา เช่น ยูคาลิปตัส โรสแมรี',
+      'ป้องกันความเย็นและความชื้น ดื่มน้ำอุ่นบ่อย ๆ',
+      'ใช้สมุนไพรฤทธิ์อุ่น เช่น ขมิ้น ขิง พริกไทยดำ',
+      'ตื่นเช้าก่อนพระอาทิตย์ขึ้น หลีกเลี่ยงการนอนกลางวัน',
+      'ฝึกสมาธิ เพื่อประสานกาย ใจ และจิตวิญญาณ',
+    ],
+    result: 'ร่างกายแข็งแรง อดทน อารมณ์คงที่ ความจำดี มีเมตตาต่อผู้อื่น และหลับสบาย',
+  },
+};
+
+// ══════════════════════════════════════
+// SUBMIT & CALCULATE
+// ══════════════════════════════════════
+const THRESHOLD = 15; // score per dosha > this = imbalanced (max=20)
+
+function submitAssessment() {
+  // Validate
+  const unanswered = questions.filter(q =>
+    !document.querySelector(`input[name="q${q.id}"]:checked`)
+  );
+  if (unanswered.length > 0) {
+    document.getElementById('errorMsg').style.display = 'block';
+    // highlight
+    questions.forEach(q => {
+      const item = document.getElementById('qi-' + q.id);
+      const answered = document.querySelector(`input[name="q${q.id}"]:checked`);
+      item.classList.toggle('unanswered', !answered);
+    });
+    const first = document.getElementById('qi-' + unanswered[0].id);
+    first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  document.getElementById('errorMsg').style.display = 'none';
+
+  // Collect answers
+  const studentId = document.getElementById('studentId').value.trim();
+  const age = document.getElementById('age').value;
+  const genderEl = document.querySelector('input[name="gender"]:checked');
+  const gender = genderEl ? genderEl.value : 'ไม่ระบุ';
+
+  const scores = { vata: 0, pitta: 0, kapha: 0 };
+  const answers = {};
+  questions.forEach(q => {
+    const val = parseInt(document.querySelector(`input[name="q${q.id}"]:checked`).value);
+    scores[q.dosha] += val;
+    answers['q' + q.id] = val;
+  });
+
+  // Determine balance state (percentage-based)
+  const doshas = ['vata', 'pitta', 'kapha'];
+  const maxPossible = 20;
+  const dominant = doshas.reduce((a, b) => scores[a] >= scores[b] ? a : b);
+  const dominantPct = Math.round((scores[dominant] / maxPossible) * 100);
+  const otherPcts = doshas.filter(d => d !== dominant)
+    .map(d => Math.round((scores[d] / maxPossible) * 100));
+  // ห่างจากธาตุอื่น <= 15% = ถือว่าใกล้เคียงกัน (สมดุล แต่มีธาตุเด่น)
+  // ห่างมากกว่า 15%        = ธาตุสูงสุดเสียสมดุลชัดเจน
+  const isBalanced = otherPcts.every(p => dominantPct - p <= 15);
+
+  // Show result page
+  document.getElementById('assessment-page').style.display = 'none';
+  document.getElementById('result-page').style.display = 'block';
+  window.scrollTo(0, 0);
+
+  const now = new Date();
+  document.getElementById('result-meta').textContent =
+    `ประเมิน ณ วันที่ ${now.toLocaleDateString('th-TH', {year:'numeric',month:'long',day:'numeric'})}`;
+
+  renderResults(scores, dominant, isBalanced);
+  sendToSheets({ studentId, age, gender, scores, answers, dominant, isBalanced, timestamp: now.toISOString() });
+}
+
+// ──────────────────────────────────────
+function renderResults(scores, dominant, isBalanced) {
+  const container = document.getElementById('result-content');
+  const a = advice[dominant];
+
+  // Score overview
+  let html = `
+    <div class="score-overview">
+      <div class="section-title" style="margin-bottom:16px">คะแนนตรีธาตุ</div>
+      ${['vata','pitta','kapha'].map(d => {
+        const pct = Math.round((scores[d] / 20) * 100);
+        const ad = advice[d];
+        return `<div class="dosha-row">
+          <div class="dosha-name ${d}">${ad.label}</div>
+          <div class="bar-track"><div class="bar-fill ${d}" style="width:${pct}%"></div></div>
+          <div class="dosha-score-label">${pct}%</div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+
+  if (isBalanced) {
+    // สมดุล แต่มีธาตุเด่น
+    html += `
+      <div class="balanced-card">
+        <h3>ตรีธาตุอยู่ในสมดุล</h3>
+        <p>คะแนนของท่านอยู่ในเกณฑ์สมดุลทั้ง 3 ธาตุ แต่มี<strong>${a.label}</strong>เด่น
+        ดังนั้นควรปรับพฤติกรรมเพิ่มเติมดังนี้</p>
+      </div>
+    `;
+  } else {
+    // เสียสมดุลชัดเจน
+    html += `
+      <div class="imbalance-alert ${dominant}">
+        <div>
+          <h3>ตรีธาตุ${a.label}เสียสมดุลชัดเจน ควรปรับพฤติกรรมเพื่อสร้างสมดุลดังนี้</h3>
+          <p style="margin-top:6px">${a.description}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  // แสดงคำแนะนำของธาตุที่เด่น/เสียสมดุล
+  html += `
+    <div class="advice-card">
+      <div class="advice-card-header ${dominant}">คำแนะนำสำหรับ${a.label}</div>
+
+      <div class="advice-section">
+        <h4>อาการที่พบบ่อย</h4>
+        <p>${a.symptoms}</p>
+      </div>
+
+      <div class="advice-section">
+        <h4>สาเหตุที่ทำให้${a.label}เสียสมดุล</h4>
+        <p>${a.causes}</p>
+      </div>
+
+      <div class="advice-section">
+        <h4>แนวทางการปรับสมดุล</h4>
+        <ul class="advice-list ${dominant}">
+          ${a.tips.map(t => `<li>${t}</li>`).join('')}
+        </ul>
+      </div>
+
+      <div class="advice-section">
+        <h4>ผลลัพธ์ที่คาดหวัง</h4>
+        <div class="result-box ${dominant}">${a.result}</div>
+      </div>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// SEND TO GOOGLE SHEETS
+// ══════════════════════════════════════
+async function sendToSheets(data) {
+  const url = document.getElementById('sheetsUrl').value.trim();
+  const statusBar = document.getElementById('sheet-status-bar');
+  const statusText = document.getElementById('sheet-status-text');
+
+  if (!url) {
+    statusBar.className = 'sheet-status fail';
+    statusBar.style.background = 'rgba(255,255,255,0.1)';
+    statusBar.style.borderColor = 'rgba(255,255,255,0.2)';
+    statusText.textContent = 'ยังไม่ได้ตั้งค่า URL ของ Google Sheets';
+    return;
+  }
+
+  try {
+    const payload = {
+      timestamp: data.timestamp,
+      student_id: data.studentId,
+      age: data.age,
+      gender: data.gender,
+      vata_pct: Math.round((data.scores.vata / 20) * 100),
+      pitta_pct: Math.round((data.scores.pitta / 20) * 100),
+      kapha_pct: Math.round((data.scores.kapha / 20) * 100),
+      result: data.isBalanced ? `สมดุล (${advice[data.dominant].label}เด่น)` : `${advice[data.dominant].label}เสียสมดุลชัดเจน`,
+      ...Object.fromEntries(
+        Object.entries(data.answers).map(([k, v]) => [k, v])
+      ),
+    };
+
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'no-cors',
+    });
+
+    statusBar.className = 'sheet-status success';
+    statusText.textContent = 'ส่งข้อมูลไปยัง Google Sheets เรียบร้อยแล้ว ✓';
+  } catch (err) {
+    statusBar.className = 'sheet-status fail';
+    statusText.textContent = 'ส่งข้อมูลไม่สำเร็จ: ' + err.message;
+  }
+}
+
+function restartAssessment() {
+  document.getElementById('result-page').style.display = 'none';
+  document.getElementById('assessment-page').style.display = 'block';
+  // Reset form
+  document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+  document.getElementById('age').value = '';
+  document.querySelectorAll('.question-item').forEach(i => i.classList.remove('unanswered'));
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressLabel').textContent = 'กรุณาตอบคำถามทุกข้อ';
+  window.scrollTo(0, 0);
+}
+</script>
+
+</body>
+</html>
