@@ -573,13 +573,7 @@
   <div class="container">
 
     <!-- Config panel -->
-    <details class="config-panel" id="configPanel">
-      <summary>⚙️ ตั้งค่าการส่งข้อมูลไปยัง Google Sheets</summary>
-      <label class="field-label" for="sheetsUrl">Google Apps Script Web App URL</label>
-      <input type="text" id="sheetsUrl" class="config-url-input" value="https://script.google.com/macros/s/AKfycbyOKwTbMFgtcOl_IpdTaTKMTwNEpM21lqGFszr0_HWs_ci4fG_zuAmt403batQLcnt-DA/exec">
-      <p class="config-note">วางลิงก์ Web App จาก Google Apps Script ที่นี่เพื่อส่งผลการประเมินไปยัง Google Sheets<br>
-      ดูวิธีสร้างด้านล่าง หรือข้ามขั้นตอนนี้หากต้องการทดสอบระบบก่อน</p>
-    </details>
+    <input type="hidden" id="sheetsUrl" value="https://script.google.com/macros/s/AKfycbyOKwTbMFgtcOl_IpdTaTKMTwNEpM21lqGFszr0_HWs_ci4fG_zuAmt403batQLcnt-DA/exec">
 
     <!-- Demographics -->
     <div class="section-card">
@@ -931,8 +925,6 @@ async function sendToSheets(data) {
 
   if (!url) {
     statusBar.className = 'sheet-status fail';
-    statusBar.style.background = 'rgba(255,255,255,0.1)';
-    statusBar.style.borderColor = 'rgba(255,255,255,0.2)';
     statusText.textContent = 'ยังไม่ได้ตั้งค่า URL ของ Google Sheets';
     return;
   }
@@ -947,17 +939,35 @@ async function sendToSheets(data) {
       pitta_pct: Math.round((data.scores.pitta / 20) * 100),
       kapha_pct: Math.round((data.scores.kapha / 20) * 100),
       result: data.isBalanced ? `สมดุล (${advice[data.dominant].label}เด่น)` : `${advice[data.dominant].label}เสียสมดุลชัดเจน`,
-      ...Object.fromEntries(
-        Object.entries(data.answers).map(([k, v]) => [k, v])
-      ),
+      ...Object.fromEntries(Object.entries(data.answers).map(([k, v]) => [k, v])),
     };
 
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      mode: 'no-cors',
-    });
+    // ใช้ iframe hidden form เพื่อหลีกเลี่ยง CORS
+    const iframe = document.createElement('iframe');
+    iframe.name = 'hidden-submit';
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = 'hidden-submit';
+    form.style.display = 'none';
+
+    // ส่งเป็น JSON string ใน field เดียว
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'data';
+    input.value = JSON.stringify(payload);
+    form.appendChild(input);
+
+    document.body.appendChild(form);
+    form.submit();
+
+    setTimeout(() => {
+      document.body.removeChild(form);
+      document.body.removeChild(iframe);
+    }, 3000);
 
     statusBar.className = 'sheet-status success';
     statusText.textContent = 'ส่งข้อมูลไปยัง Google Sheets เรียบร้อยแล้ว ✓';
